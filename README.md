@@ -1,21 +1,101 @@
 # 🛒 Customer Analytics Pipeline — Segmentation & CLV Prediction
 
-[![Project Status](https://img.shields.io/badge/Project-Customer_Analytics-blue?style=flat-square)](https://github.com/kaustubhthorat07/customer-analytics-pipeline)
-[![Tech Stack](https://img.shields.io/badge/Tech-Python_|_Sklearn_|_XGBoost_|_Streamlit-success?style=flat-square)](https://github.com/kaustubhthorat07/customer-analytics-pipeline)
-[![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen?style=flat-square)](https://github.com/kaustubhthorat07/customer-analytics-pipeline)
+[![GitHub license](https://img.shields.io/github/license/Thorat-Kaustubh/Customer-Data-Processing-Analytics-Pipeline?style=flat-square&color=blue)](https://github.com/Thorat-Kaustubh/Customer-Data-Processing-Analytics-Pipeline)
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue?style=flat-square)](https://www.python.org/)
+[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-%23FF4B4B.svg?style=flat-square&logo=Streamlit&logoColor=white)](https://streamlit.io/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-%231A85FF?style=flat-square)](https://xgboost.readthedocs.io/)
+
+An end-to-end, production-ready machine learning and data engineering pipeline designed to clean raw transaction logs, perform customer segmentation, predict 90-day Customer Lifetime Value (CLV), and serve findings via an interactive dashboard and automated PDF reports.
 
 ---
 
-## 📘 Overview
+## 📌 Table of Contents
+* [System Architecture](#-system-architecture)
+* [Directory Structure](#-directory-structure)
+* [Key Modules](#-key-modules)
+* [Dashboard Preview](#-dashboard-preview)
+* [Installation & Setup](#-installation--setup)
+* [Usage Guide](#-usage-guide)
+* [Model Performance Evaluation](#-model-performance-evaluation)
+* [License](#-license)
 
-The **Customer Analytics Pipeline** is a complete, end-to-end machine learning workflow that converts raw customer transaction data into:
-- **Customer Segmentation**: Actionable behavioral groupings using K-Means.
-- **Behavioral Insights**: Multi-dimensional RFM profile analysis.
-- **90-Day CLV Predictions**: Predictive revenue modeling using regressor models.
-- **Interactive Dashboards**: Real-time analytical dashboard built with Streamlit and Plotly.
-- **Automated PDF Reports**: Multi-page business-ready reporting.
+---
 
-It follows a modular, production-ready architecture designed for enterprise analytics and robust business deployments.
+## 📐 System Architecture
+
+The pipeline processes transactional data through a series of modular stages:
+
+```mermaid
+graph TD
+    A[Raw Transaction Data] -->|Data Ingestion & Cleaning| B[Normalized Transactions]
+    B -->|RFM Aggregation| C[Historical RFM Table]
+    C -->|Feature Scaling| D[Standardized RFM Vectors]
+    D -->|K-Means Clustering| E[Customer Segments]
+    B -->|Time-Window Filtering| F[90-day Future Value Target]
+    C -->|Feature Matrix| G[CLV Regression Models]
+    F -->|Target Variable| G
+    G -->|Model Evaluation & MAE Selection| H[Best Serialized Model]
+    E -->|Visualization & Exploration| I[Streamlit App]
+    H -->|Prediction Interface| I
+    I -->|PDF Generation| J[Multi-page PDF Report]
+```
+
+---
+
+## 📂 Directory Structure
+
+```text
+├── data/
+│   ├── processed/          # Cleaned datasets, RFM tables, and target labels
+│   │   ├── rfm_clv.csv
+│   │   ├── rfm_table.csv
+│   │   └── rfm_with_segments.csv
+│   └── raw/                # Place raw transaction CSV files here
+├── models/                 # Serialized model objects and labels
+│   ├── cluster_labels.json
+│   ├── clv_model_rf.pkl
+│   ├── kmeans_model.pkl
+│   ├── regression_results.json
+│   └── scaler.pkl
+├── src/                    # Modular source code
+│   ├── __init__.py         # Python package marker
+│   ├── clustering.py       # K-Means scaling and evaluation
+│   ├── clv_regression.py   # Machine learning regressors
+│   ├── pdf_report.py       # Custom FPDF report layout and compilation
+│   ├── rfm_engineering.py  # Feature engineering aggregators
+│   └── utils.py            # Persistence helpers
+├── app.py                  # Streamlit dashboard interface
+├── main_pipeline.py        # Pipeline orchestrator
+├── requirements.txt        # Third-party dependencies
+└── README.md               # Documentation
+```
+
+---
+
+## 🚀 Key Modules
+
+### 1. Feature Engineering (`src/rfm_engineering.py`)
+Computes customer-level RFM metrics from transactional data:
+*   **Recency**: Days elapsed since the customer's last purchase relative to the snapshot date.
+*   **Frequency**: Total count of unique purchases.
+*   **Monetary Metrics**: Total spend, average purchase value, and monetary variance per user.
+
+### 2. Customer Segmentation (`src/clustering.py`)
+Applies **StandardScaler** to normalize feature scaling and leverages **K-Means clustering**:
+*   Uses **Elbow Method (Inertia)** and **Silhouette Coefficient analysis** to optimize the cluster count.
+*   Segments customers into actionable target categories: *Champions, Loyal, Potential Loyalists, At Risk, and Lost*.
+
+### 3. Predictive CLV Modeling (`src/clv_regression.py`)
+Calculates a 90-day forward window future value target for supervised training:
+*   Trains multiple regression models (e.g., **Random Forest**, **XGBoost**).
+*   Applies automated selection to pick the best model based on Mean Absolute Error (MAE) validation scores.
+*   Serializes model metrics to JSON and saves the top-performing estimator via **Joblib**.
+
+### 4. Custom Reporting & App UI (`src/pdf_report.py` & `app.py`)
+*   **KPI Scorecards**: Tracks overall customer values, active segments, and projected forward revenue.
+*   **Interactive Visualizations**: Includes segment shares, box distributions, actual vs. predicted distributions, and metric comparisons.
+*   **Automated PDF Reports**: Compiles a multi-page document complete with performance tables, visualizations, and summary findings with a single click.
 
 ---
 
@@ -33,54 +113,16 @@ The interactive dashboard provides key performance indicators (KPIs), segmentati
 
 ---
 
-## 🚀 Key Features
-
-### 1. RFM Feature Engineering
-Aggregates transactional histories to automatically extract:
-*   **Recency**: Days since last purchase.
-*   **Frequency**: Total number of transactions.
-*   **Monetary Metrics**: Total spend, average purchase value, and monetary variance.
-
-### 2. Smart Customer Segmentation (K-Means)
-Identifies distinct behavioral customer segments using standardized scaling:
-*   **Champions**: Highly active, frequent, and high-value customers.
-*   **Loyal**: Reliable customers with consistent engagement.
-*   **Potential Loyalists**: Recent shoppers with high frequency growth potential.
-*   **At Risk**: Customers showing warning signs of churn.
-*   **Lost**: Dormant accounts requiring re-engagement campaigns.
-
-### 3. Predictive CLV Modeling
-Trains, validates, and compares regression algorithms including:
-*   Linear Regression, Ridge, and Lasso (baselines)
-*   Ensemble models: Random Forest, Extra Trees, and Gradient Boosting
-*   Extreme Gradient Boosting (XGBoost)
-
-*Note: The pipeline automatically evaluates validation Mean Absolute Error (MAE) and selects the best-performing model for serialization.*
-
-### 4. Interactive Streamlit Dashboard
-*   **KPI Cards**: Immediate summary of predicted revenue, average CLV, and high-value customer counts.
-*   **Customer Explorer**: Searchable and filterable data grid with CSV exporter.
-*   **One-Click PDF Export**: Generate publication-quality reports instantly.
-
-### 5. Automated PDF Reporting
-Generates a structured, multi-page business document containing:
-*   Executive Summary
-*   Detailed Segment Profiles (Averages)
-*   Validation Metric Comparison Tables
-*   Embedded Visualization Charts
-
----
-
 ## ⚙️ Installation & Setup
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/kaustubhthorat07/customer-analytics-pipeline.git
-cd customer-analytics-pipeline
+git clone https://github.com/Thorat-Kaustubh/Customer-Data-Processing-Analytics-Pipeline.git
+cd Customer-Data-Processing-Analytics-Pipeline
 ```
 
-### 2. Create and Activate Virtual Environment
-*   **Windows (PowerShell)**:
+### 2. Set Up Virtual Environment
+*   **Windows**:
     ```powershell
     python -m venv venv
     .\venv\Scripts\Activate.ps1
@@ -96,8 +138,8 @@ cd customer-analytics-pipeline
 pip install -r requirements.txt
 ```
 
-### 4. Prepare Dataset
-Place your raw transaction CSV/Excel file in:
+### 4. Provide Raw Transaction File
+Ensure your transaction dataset is placed at:
 ```text
 data/raw/online_retail_II.csv
 ```
@@ -106,8 +148,8 @@ data/raw/online_retail_II.csv
 
 ## 🏃‍♂️ Usage Guide
 
-### 1. Run the End-to-End Pipeline
-Executes feature extraction, K-Means clustering, CLV label calculation, and regression comparison:
+### 1. Run the Pipeline
+To ingest data, run feature engineering, train ML models, and output models/data, run:
 ```bash
 python main_pipeline.py
 ```
@@ -117,14 +159,30 @@ python main_pipeline.py
 streamlit run app.py
 ```
 
-### 3. Generate Report
-Inside the Streamlit sidebar, click **📄 Generate PDF Report** to download the auto-compiled PDF report immediately.
+### 3. Export Executive Summaries
+Click on **📄 Generate PDF Report** in the Streamlit sidebar to generate and download a compiled PDF summarizing segment metrics and performance plots.
+
+---
+
+## 📊 Model Performance Evaluation
+
+The pipeline trains, runs, and evaluates models against test sets. Example validation metrics:
+
+| Model | MAE | RMSE | $R^2$ Score |
+| :--- | :---: | :---: | :---: |
+| **Random Forest Regressor** | 0.00 | 0.00 | 1.000 |
+| **XGBoost Regressor** | 0.00 | 0.00 | 1.000 |
+
+*Note: Validation metrics may vary depending on the transactional dataset provided.*
+
+---
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
 ## ✉️ Contact
-
-For questions, feedback, or collaboration opportunities, feel free to contact:
-
+For inquiries, contributions, or questions:
 *   **Developer**: Kaustubh Thorat
 *   **Email**: [kaustubhthorat07@gmail.com](mailto:kaustubhthorat07@gmail.com)

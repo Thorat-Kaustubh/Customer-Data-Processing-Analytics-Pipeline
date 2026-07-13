@@ -11,14 +11,28 @@ An end-to-end, production-ready machine learning and data engineering pipeline d
 ---
 
 ## 📌 Table of Contents
+* [Dashboard Preview](#-dashboard-preview)
 * [System Architecture](#-system-architecture)
 * [Directory Structure](#-directory-structure)
 * [Key Modules](#-key-modules)
-* [Dashboard Preview](#-dashboard-preview)
 * [Installation & Setup](#-installation--setup)
 * [Usage Guide](#-usage-guide)
 * [Model Performance Evaluation](#-model-performance-evaluation)
 * [License](#-license)
+
+---
+
+## 🖼️ Dashboard Preview
+
+The interactive dashboard provides key performance indicators (KPIs), segmentation views, CLV forecasting, and a customer explorer utility.
+
+| Page 1: Customer Segmentation | Page 2: CLV Prediction & Actuals |
+|:---:|:---:|
+| ![Segment Distribution](image1.png) | ![CLV Distribution](image2.png) |
+
+| Page 3: Recency vs Monetary | Page 4: Model Performance |
+|:---:|:---:|
+| ![Recency vs Monetary](image3.png) | ![Model Comparison](image4.png) |
 
 ---
 
@@ -96,20 +110,6 @@ Calculates a 90-day forward window future value target for supervised training:
 *   **KPI Scorecards**: Tracks overall customer values, active segments, and projected forward revenue.
 *   **Interactive Visualizations**: Includes segment shares, box distributions, actual vs. predicted distributions, and metric comparisons.
 *   **Automated PDF Reports**: Compiles a multi-page document complete with performance tables, visualizations, and summary findings with a single click.
-
----
-
-## 🖼️ Dashboard Preview
-
-The interactive dashboard provides key performance indicators (KPIs), segmentation views, CLV forecasting, and a customer explorer utility.
-
-| Page 1: Customer Segmentation | Page 2: CLV Prediction & Actuals |
-|:---:|:---:|
-| ![Segment Distribution](image1.png) | ![CLV Distribution](image2.png) |
-
-| Page 3: Recency vs Monetary | Page 4: Model Performance |
-|:---:|:---:|
-| ![Recency vs Monetary](image3.png) | ![Model Comparison](image4.png) |
 
 ---
 
